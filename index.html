@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ETL</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="./css/index.css">
+<link rel="stylesheet" type="text/css"
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+<script src="./js/index.js"></script>
+</head>
+<body>
+	<div class="container-fluid-not" id="main">
+		<nav class="navbar navbar-expand-sm bg-dark navbar-dark" id="navBar">
+			<a class="navbar-brand" href="#">ETL</a>
+
+			<!-- Links -->
+			<ul class="navbar-nav">
+				<!-- Dropdown -->
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" href="#" id="navbardrop"
+					data-toggle="dropdown"> Source Action </a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="#" id="newDB">Database</a>
+						<!--<a class="dropdown-item" href="#" <!--data-toggle="modal" data-target="#myModal">Link 2</a>
+				<a class="dropdown-item" href="#">Link 3</a>-->
+					</div></li>
+			</ul>
+		</nav>
+		<div class="modal fade" id="myModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<h4 class="modal-title">Database Connection</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+
+					<!-- Modal body -->
+					<div class="modal-body">
+						<div id="modalContent">
+						</div>
+						<div id="moreContent">
+						</div>	
+					</div>
+
+					<!-- Modal footer -->
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" id="modalSubmit">Submit</button>
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal" id="modalClose">Close</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-2" id="left" style="">
+				<div id="source-section">
+					<div class="left-sidebar-content">
+						<div id="repositories" class="left-pan-collapse">
+							<i class="fa fa-plus-square-o" aria-hidden="true"></i> &nbsp;Repositories
+						</div>
+							
+						<div class="left-pan-subsection">
+							<div class="vertical-dot-line"></div>
+							<div class="horizontal-dot-line"></div>
+							<div id="source" class="left-pan-collapse">
+								<i class="fa fa-plus-square-o" aria-hidden="true"></i> &nbsp;Source
+							</div>
+							<div class="left-sidebar-content1" id="sourceTable2">
+								
+								<!--<i class="fa fa-chevron-right" aria-hidden="true"
+									data-toggle="collapse" data-target="#table1,#table2"></i> Table
+								<div class="left-sidebar-content" id="table1"
+									data-table-index="1">
+									<i class="fa fa-chevron-right" aria-hidden="true"
+										data-toggle="collapse" data-target="#"></i> EMP Table
+								</div>
+								<div class="left-sidebar-content" id="table2"
+									data-table-index="2">
+									<i class="fa fa-chevron-right" aria-hidden="true"
+										data-toggle="collapse" data-target="#"></i> USR Table
+								</div>-->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-10 right" id="right"
+				style="border-left: 1px solid gray;">.col</div>
+		</div>
+	</div>
+	</div>
+</body>
+</html>
