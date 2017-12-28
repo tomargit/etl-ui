@@ -21,9 +21,12 @@ div#dbTable {
 }
 .vertical-dot-line{
     border-left: 1px dotted black;
-    height: 15px;
+    height: 25px;
 }	
 .horizontal-dot-line{
     border-bottom: 1px dotted black;
     width: 15px;
 }	
+.hand {
+	cursor: pointer;
+}

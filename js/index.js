@@ -14,10 +14,8 @@ $(document).ready(function(){
 	
 	// On page load change fa icon css
 	faIconWidth = $('#repositories i').width();
-	$('.vertical-dot-line').css('margin-left',faIconWidth/2).css('margin-top','-3px');
-	$('.horizontal-dot-line').css('margin-left',faIconWidth/2);
-	$('.horizontal-dot-line').next().css('margin-left', $('.horizontal-dot-line').width()+8).css('margin-top',-1*faIconWidth);
-	
+	faIconHeight = $('#repositories i').height();
+	manageDotStructure($('.left-sidebar-content'));
 	
 	$("#topNav li").click(function(){
 		var $this = $(this);
@@ -105,13 +103,27 @@ $(document).ready(function(){
 	$(document).on("click", "#selectTable", function(){
 		var $this = $(this);
 		
-		$('#myModal').modal('show');
-		//var leftMargin = $('.vertical-dot-line').parent().find('i:first').width()/2;
-		//$('#moreContent').append('<div styple="margin-left: '+ ($('#dbTable').width() + 70) +'"><button type="button" class="btn btn-primary" id="modalSubmit">Submit</button></div>');
+		
+		html = '';
+		$('#moreContent a.table-select').each(function(i,ref){
+			var $ref = $(ref), tableName = $ref.html();
+			
+			html += '<div class="left-pan-subsection">'
+						+ '<div class="vertical-dot-line"></div>'
+						+ '<div class="horizontal-dot-line"></div>'
+						+ '<div id="source" class="left-pan-collapse">'
+						+		'<i class="fa fa-plus-square-o hand" aria-hidden="true"></i> &nbsp;' + tableName
+						+	'</div>'
+						+'</div>';	
+		});
+		$('#source').closest('.left-pan-subsection').append(html);
+		manageDotStructure($('#source').closest('.left-pan-subsection'));
+		$('#myModal').modal('hide');
 	});
 	
-	$('#repositories').click(function(){
+	$(document).on("click", ".hand", function(){
 		var $this = $(this);
+		$this.closest('div').parent().find('.left-pan-subsection').slideToggle();	
 	});
 });
 
@@ -163,8 +175,22 @@ function sourceDataSuccess(data){
 	$('#moreContent').html('<div id="dbTable" style="display:none;"><div class="modal-text"></div></div>');
 	$('.modal-content').height($('.modal-content').height()+$('#dbTable').height());
 	$.each(sourceData,function(i,v){
-		$('.modal-text').append('<a href="javascript:void(0)" style="color: black;" class="table-select-not">'+v.tableName+'</a><br/>');
+		$('.modal-text').append('<a href="javascript:void(0)" style="color: black;" class="table-select-not" data-id='+i+'>'+v.tableName+'</a><br/>');
 	});
 	$('#moreContent').append('<div><button type="button" class="btn btn-primary" id="selectTable" style="margin-left: '+ ($('#dbTable').width() + 50) +'px;margin-top: 100px;">Select</button></div>');
 	$('#dbTable').show();
+}
+
+function manageDotStructure(obj){
+	
+	$.each(obj.find('.left-pan-subsection'), function(i,v){
+		var $this = $(this);
+		if(i==0)
+			$this.find('.vertical-dot-line').css('margin-left',faIconWidth/2).css('margin-top','-3px');
+		else
+			$this.find('.vertical-dot-line').css('margin-left',faIconWidth/2).css('margin-top',-1*(3+faIconHeight/2)+'px');
+		
+		$this.find('.horizontal-dot-line').css('margin-left',faIconWidth/2);
+		$this.find('.horizontal-dot-line').next().css('margin-left', $('.horizontal-dot-line').width()+8).css('margin-top',-1*faIconWidth);
+	});
 }
