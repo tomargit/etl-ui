@@ -37,9 +37,9 @@ $(document).ready(function() {
     ajaxParam["successCallback"] = "sourceDataSuccess";
     ajaxParam["completeCallback"] = "dbCompleteCallback";
     ajaxParam["errorCallback"] = "dbErrorCallback";
-    makeAjaxCall(ajaxParam);
+    //makeAjaxCall(ajaxParam);
     //$('#myModal').modal('hide');
-    /*sourceData = [{
+    sourceData = [{
       "tableName": "Table 0",
       "status": true
     }, {
@@ -70,7 +70,7 @@ $(document).ready(function() {
       "tableName": "Table 9",
       "status": true
     }];
-    sourceDataSuccess(sourceData);*/
+    sourceDataSuccess(sourceData);
   });
 
   $("#newDB").click(function() {
@@ -84,11 +84,10 @@ $(document).ready(function() {
     ajaxParam["successCallback"] = "dbSuccessCallback";
     ajaxParam["completeCallback"] = "dbCompleteCallback";
     ajaxParam["errorCallback"] = "dbErrorCallback";
-    makeAjaxCall(ajaxParam);
-    //dbData = [{"passRequired":false,"dbType":"Hbase","status":true,"userNameRequired":false,"urlRequired":true},{"passRequired":true,"dbType":"MySql","status":true,"userNameRequired":true,"urlRequired":true}];
-    //dbSuccessCallback(dbData);
+    //makeAjaxCall(ajaxParam);
+    dbData = [{"passRequired":false,"dbType":"Hbase","status":true,"userNameRequired":false,"urlRequired":true},{"passRequired":true,"dbType":"MySql","status":true,"userNameRequired":true,"urlRequired":true}];
+    dbSuccessCallback(dbData);
     $('#myModal').modal('show');
-
   });
 
   $('#myModal').on('hide.bs.modal', function(e) {
@@ -137,7 +136,7 @@ $(document).ready(function() {
     var $this = $(this);
 
     // first add database
-    var dbName = $('#dbName').val();
+    dbName = $('#dbName').val();
     dbNameHtml = '<div class="left-pan-subsection">' +
       '<div class="vertical-dot-line"></div>' +
       '<div class="horizontal-dot-line"></div>' +
@@ -158,7 +157,7 @@ $(document).ready(function() {
       html += '<div class="left-pan-subsection">' +
         '<div class="vertical-dot-line"></div>' +
         '<div class="horizontal-dot-line"></div>' +
-        '<div id="' + dbName + 'DB' + i + '" class="left-pan-collapse">' +
+        '<div id="' + dbName + 'DB' + i + '" class="left-pan-collapse text-format">' +
         '<i class="fa fa-plus-square-o hand" aria-hidden="true"></i> &nbsp;<a href="javascript:void(0)" class="' + dbName + 'DB' + i + '">' + tableName +
         '</a></div>' +
         '</div>';
@@ -279,7 +278,7 @@ function sourceDataSuccess(data) {
 	  $('#moreContent').html('<div id="dbTable" style="display:none;"><div class="modal-text"></div></div>');
 	  $('.modal-content').height($('.modal-content').height() + $('#dbTable').height());
 	  $.each(sourceData, function(i, v) {
-	    $('.modal-text').append('<a href="javascript:void(0)" style="color: black;" class="table-select-not" data-id=' + i + '>' + v.tableName + '</a><br/>');
+	    $('.modal-text').append('<a href="javascript:void(0)" class="table-select-not" data-id=' + i + '>' + v.tableName + '</a><br/>');
 	  });
 	  $('#moreContent').append('<div><button type="button" class="btn btn-primary" id="selectTable" style="margin-left: ' + ($('#dbTable').width() + 50) + 'px;margin-top: 100px;">Select</button></div>');
 	  $('#dbTable').show();

@@ -1,32 +1,48 @@
 div.article {
-    border-left: 1px solid gray;
-    padding: 1em;
+  border-left: 1px solid gray;
+  padding: 1em;
 }
+
 div.modal-section label {
-	width: 115px;	
+  width: 115px;
 }
+
 div.left-sidebar-content {
-	margin-left: 10px;
+  margin-left: 10px;
 }
+
 div#dbTable {
-	position: absolute;
-    left: 10px;
-    width: 295px;
-    height:200px;
-    overflow-x: hidden;
-    overflow-y: auto;	
+  position: absolute;
+  left: 10px;
+  width: 295px;
+  height: 200px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
-.modal-text{
-    margin-left: 10px;
+
+.modal-text {
+  margin-left: 10px;
 }
-.vertical-dot-line{
-    border-left: 1px dotted black;
-    height: 25px;
-}	
-.horizontal-dot-line{
-    border-bottom: 1px dotted black;
-    width: 15px;
-}	
+
+.vertical-dot-line {
+  border-left: 1px dotted black;
+  height: 25px;
+}
+
+.horizontal-dot-line {
+  border-bottom: 1px dotted black;
+  width: 15px;
+}
+
 .hand {
-	cursor: pointer;
+  cursor: pointer;
+}
+
+div#left {
+  overflow: auto;
+}
+
+div.text-format {
+  color: black;
+  white-space: nowrap;
 }
