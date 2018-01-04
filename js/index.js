@@ -3,6 +3,7 @@ $(document).ready(function() {
   siteUrl = "";
   dbData = [];
   sourceData = [];
+  lastDBConnectionData = {};
   verticalDashDiv = '<div class="vertical-dot-line"></div>';
   horizontalDashDiv = '<div class="horizontal-dot-line"></div>';
   dashDiv = '<div>' + verticalDashDiv + '' + horizontalDashDiv + '</div>';
@@ -28,49 +29,18 @@ $(document).ready(function() {
 
   $("#modalSubmit").click(function() {
     ajaxParam = {};
-    ajaxParam["url"] = link + "getDBTableList/" + $('#dbType option:selected').text() + '/' + $('#dbName').val() + '/' + $('#url').val() + '/'  + $('#userName').val() + '/' + $('#password').val();;
+    ajaxParam["url"] = link + "getDBTableList/" + $('#dbType option:selected').text() + '/' + $('#dbName').val() + '/' + $('#url').val() + '/' + $('#userName').val() + '/' + $('#password').val();;
     ajaxParam["method"] = "GET";
-    //ajaxParam["id"] = $('#dbType').val();
-    //ajaxParam["url"] = $('#url').val();
-    //ajaxParam["userName"] = $('#userName').val();
-    //ajaxParam["password"] = $('#password').val();
+    //lastDBConnectionData["dbType"] = $('#dbType').val();
+    //lastDBConnectionData["url"] = $('#url').val();
+    //lastDBConnectionData["userName"] = $('#userName').val();
+    //lastDBConnectionData["password"] = $('#password').val();
+    //lastDBConnectionData = getDivContent($('#modalContent'));
+    lastDBConnectionData = getDivContent($('#modalContent'));
     ajaxParam["successCallback"] = "sourceDataSuccess";
     ajaxParam["completeCallback"] = "dbCompleteCallback";
     ajaxParam["errorCallback"] = "dbErrorCallback";
-    //makeAjaxCall(ajaxParam);
-    //$('#myModal').modal('hide');
-    sourceData = [{
-      "tableName": "Table 0",
-      "status": true
-    }, {
-      "tableName": "Table 1",
-      "status": true
-    }, {
-      "tableName": "Table 2",
-      "status": true
-    }, {
-      "tableName": "Table 3",
-      "status": true
-    }, {
-      "tableName": "Table 4",
-      "status": true
-    }, {
-      "tableName": "Table 5",
-      "status": true
-    }, {
-      "tableName": "Table 6",
-      "status": true
-    }, {
-      "tableName": "Table 7",
-      "status": true
-    }, {
-      "tableName": "Table 8",
-      "status": true
-    }, {
-      "tableName": "Table 9",
-      "status": true
-    }];
-    sourceDataSuccess(sourceData);
+    makeAjaxCall(ajaxParam);
   });
 
   $("#newDB").click(function() {
@@ -79,14 +49,14 @@ $(document).ready(function() {
     //ajaxParam["url"] = "https://www.w3schools.com/bootstrap4/checkDBConnectionStatus";
     ajaxParam["url"] = link + "getAllDBTypes";
     ajaxParam["method"] = "GET";
-    ajaxParam["dbType"] = $('#dbType').val();
-    ajaxParam["dbUrl"] = $('#dbUrl').val();
+    //ajaxParam["dbType"] = $('#dbType').val();
+    //ajaxParam["dbUrl"] = $('#dbUrl').val();
     ajaxParam["successCallback"] = "dbSuccessCallback";
     ajaxParam["completeCallback"] = "dbCompleteCallback";
     ajaxParam["errorCallback"] = "dbErrorCallback";
-    //makeAjaxCall(ajaxParam);
-    dbData = [{"passRequired":false,"dbType":"Hbase","status":true,"userNameRequired":false,"urlRequired":true},{"passRequired":true,"dbType":"MySql","status":true,"userNameRequired":true,"urlRequired":true}];
-    dbSuccessCallback(dbData);
+    makeAjaxCall(ajaxParam);
+    //dbData = [{"passRequired":false,"dbType":"Hbase","status":true,"userNameRequired":false,"urlRequired":true},{"passRequired":true,"dbType":"MySql","status":true,"userNameRequired":true,"urlRequired":true}];
+    //dbSuccessCallback(dbData);
     $('#myModal').modal('show');
   });
 
@@ -135,35 +105,29 @@ $(document).ready(function() {
   $(document).on("click", "#selectTable", function() {
     var $this = $(this);
 
-    // first add database
-    dbName = $('#dbName').val();
-    dbNameHtml = '<div class="left-pan-subsection">' +
-      '<div class="vertical-dot-line"></div>' +
-      '<div class="horizontal-dot-line"></div>' +
-      '<div id="' + dbName + 'DB" class="left-pan-collapse">' +
-      '<i class="fa fa-minus-square-o hand" aria-hidden="true"></i> &nbsp;' + dbName +
-      '</div>' +
-      '</div>';
-
-    $('#source').closest('.left-pan-subsection').append(dbNameHtml);
-    manageDotStructure($('#source').closest('.left-pan-subsection'));
-
-    // addition of table
-    html = '';
+    ajaxParam = {};
+    //ajaxParam["url"] = "https://www.w3schools.com/bootstrap4/checkDBConnectionStatus";
+    ajaxParam["url"] = link + "addETLFlow";
+    ajaxParam["method"] = "POST";
+    ajaxParam["data"] = {};
+    ajaxParam["data"]["targetTableName"] = $('#dbName').val();
+    ajaxParam["data"]["sourceList"] = [];
     $('#moreContent a.table-select').each(function(i, ref) {
       var $ref = $(ref),
         tableName = $ref.html();
-
-      html += '<div class="left-pan-subsection">' +
-        '<div class="vertical-dot-line"></div>' +
-        '<div class="horizontal-dot-line"></div>' +
-        '<div id="' + dbName + 'DB' + i + '" class="left-pan-collapse text-format">' +
-        '<i class="fa fa-plus-square-o hand" aria-hidden="true"></i> &nbsp;<a href="javascript:void(0)" class="' + dbName + 'DB' + i + '">' + tableName +
-        '</a></div>' +
-        '</div>';
+      var tableDetail = {};
+      tableDetail['name'] = tableName;
+      ajaxParam["data"]["targetTableName"]["sourceList"] = [];
+      $.each(lastDBConnectionData, function(index, value) {
+        tableDetail[index] = value;
+      });
+      ajaxParam["data"]["sourceList"][i] = tableDetail;
     });
-    $('#' + dbName + 'DB').closest('.left-pan-subsection').append(html);
-    manageDotStructure($('#' + dbName + 'DB').closest('.left-pan-subsection'));
+    //lastDBConnectionData;
+    ajaxParam["successCallback"] = "addTableList";
+    ajaxParam["completeCallback"] = "dbCompleteCallback";
+    ajaxParam["errorCallback"] = "dbErrorCallback";
+    makeAjaxCall(ajaxParam);
     $('#myModal').modal('hide');
   });
 
@@ -184,56 +148,63 @@ $(document).ready(function() {
 
 function makeAjaxCall(ajaxParam) {
 
-  params = {};
-  for (var key in ajaxParam) {
-    if (key != 'successCallback' && key != 'errorCallback' && key != 'completeCallback' && key != 'url' && key != 'method') {
-      params[key] = ajaxParam[key];
-    }
+  if (ajaxParam['method'].toUpperCase() === 'POST') {
+    $.ajax({
+      url: ajaxParam['url'],
+      type: ajaxParam['method'],
+      //data: (ajaxParam['data'] && ajaxParam['method'].toUpperCase() === 'POST' ? JSON.stringify(ajaxParam['data']) : ''),
+      data: {
+"targetTableName" : "empIndia11",
+"sourceList" : [
+{
+ "name": "employee",
+ "url": "localhost",
+ "dbType": "mysql",
+"userName": "root",
+"password": "root"
+},
+{
+ "name": "salary",
+ "url": "localhost",
+ "dbType": "mysql",
+"userName": "root",
+"password": "root"
+},
+{
+ "name": "emp_details",
+ "url": "localhost",
+ "dbType": "mysql",
+"userName": "root",
+"password": "root"
+}
+
+
+]
+},
+      //contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      crossDomain: true,
+      error: function() {},
+      beforeSend: function() {},
+      complete: function() {},
+      success: function(result) {
+        window[ajaxParam["successCallback"]](result);
+      }
+    });
+  } else {
+
+    $.ajax({
+      url: ajaxParam['url'],
+      type: ajaxParam['method'],
+      crossDomain: true,
+      error: function() {},
+      beforeSend: function() {},
+      complete: function() {},
+      success: function(result) {
+        window[ajaxParam["successCallback"]](result);
+      }
+    });
   }
-  params = JSON.stringify(params);
-
-  $.ajax({
-    url: ajaxParam['url'],
-    type: ajaxParam['method'],
-    data: params,
-    dataType: "json",
-    crossDomain: true,
-    error: function() {},
-    beforeSend: function() {},
-    complete: function() {},
-    success: function(result) {
-      window[ajaxParam["successCallback"]](result);
-    }
-  });
-
-  /*$.ajax({
-    type: ajaxParam['method'],
-    url: ajaxParam['url'],
-    //data: params,
-    //contentType: "application/json; charset=utf-8",
-    dataType: "json",
-    crossDomain: true,
-    success: function(result){
-        ajaxParam["successCallback"](result);
-    },
-    error : function(){
-      //ajaxParam['errorCallback']();
-    },
-    complete : function(){
-      //ajaxParam['dbCompleteCallback']();
-    }
-  });*/
-
-  /*$.ajax({
-        success : ajaxParam["successCallback"],
-        error : ajaxParam['errorCallback'],
-		    complete : ajaxParam['dbCompleteCallback'],
-        data : params,
-        url : ajaxParam['url'],
-        type : ajaxParam['method'],
-        dataType : 'json',
-		    crossDomain: true,
-    });*/
 }
 
 function dbSuccessCallback(data) {
@@ -241,7 +212,7 @@ function dbSuccessCallback(data) {
   $('#moreContent').html('');
   if (data && data.length > 0) {
     var length = data.length;
-    $('#modalContent').append('<div class="modal-section"><label>Database Type:</label><select id="dbType"></select></div>');
+    $('#modalContent').append('<div class="modal-section"><label>Database Type:</label><select id="dbType" name="dbType"></select></div>');
     for (var i = 0; i < length; i++) {
       $('#dbType').append('<option value=' + data[i].id + '>' + data[i].db_name + '</option>');
     }
@@ -272,17 +243,16 @@ function dbErrorCallback() {
 }
 
 function sourceDataSuccess(data) {
-	if(data && data.length>0)
-	{
-		sourceData = data;
-	  $('#moreContent').html('<div id="dbTable" style="display:none;"><div class="modal-text"></div></div>');
-	  $('.modal-content').height($('.modal-content').height() + $('#dbTable').height());
-	  $.each(sourceData, function(i, v) {
-	    $('.modal-text').append('<a href="javascript:void(0)" class="table-select-not" data-id=' + i + '>' + v.tableName + '</a><br/>');
-	  });
-	  $('#moreContent').append('<div><button type="button" class="btn btn-primary" id="selectTable" style="margin-left: ' + ($('#dbTable').width() + 50) + 'px;margin-top: 100px;">Select</button></div>');
-	  $('#dbTable').show();
-		}
+  if (data && data.length > 0) {
+    sourceData = data;
+    $('#moreContent').html('<div id="dbTable" style="display:none;"><div class="modal-text"></div></div>');
+    $('.modal-content').height($('.modal-content').height() + $('#dbTable').height());
+    $.each(sourceData, function(i, v) {
+      $('.modal-text').append('<a href="javascript:void(0)" style="color : black;" class="table-select-not" data-id=' + i + '>' + v.tableName + '</a><br/>');
+    });
+    $('#moreContent').append('<div><button type="button" class="btn btn-primary" id="selectTable" style="margin-left: ' + ($('#dbTable').width() + 50) + 'px;margin-top: 100px;">Select</button></div>');
+    $('#dbTable').show();
+  }
 }
 
 function manageDotStructure(obj) {
@@ -312,4 +282,47 @@ function manageDotStructure(obj) {
       nectCor = nextRef.position();
 
   }
+}
+
+function addTableList(data) {
+  // first add database
+  dbName = $('#dbName').val();
+  dbNameHtml = '<div class="left-pan-subsection">' +
+    '<div class="vertical-dot-line"></div>' +
+    '<div class="horizontal-dot-line"></div>' +
+    '<div id="' + dbName + 'DB" class="left-pan-collapse">' +
+    '<i class="fa fa-minus-square-o hand" aria-hidden="true"></i> &nbsp;' + dbName +
+    '</div>' +
+    '</div>';
+
+  $('#source').closest('.left-pan-subsection').append(dbNameHtml);
+  manageDotStructure($('#source').closest('.left-pan-subsection'));
+
+  // addition of table
+  html = '';
+  $('#moreContent a.table-select').each(function(i, ref) {
+    var $ref = $(ref),
+      tableName = $ref.html();
+
+    html += '<div class="left-pan-subsection">' +
+      '<div class="vertical-dot-line"></div>' +
+      '<div class="horizontal-dot-line"></div>' +
+      '<div id="' + dbName + 'DB' + i + '" class="left-pan-collapse text-format">' +
+      '<i class="fa fa-plus-square-o hand" aria-hidden="true"></i> &nbsp;<a href="javascript:void(0)" style="color : black;" class="' + dbName + 'DB' + i + '">' + tableName +
+      '</a></div>' +
+      '</div>';
+  });
+  $('#' + dbName + 'DB').closest('.left-pan-subsection').append(html);
+  manageDotStructure($('#' + dbName + 'DB').closest('.left-pan-subsection'));
+  $('#myModal').modal('hide');
+}
+
+function getDivContent(obj) {
+  data = {};
+  $.each(obj.find('input,select'), function(i, v) {
+    var $this = $(this),
+      $v = $(v);
+    data[$this.attr('name')] = $v.val();
+  });
+  return data;
 }
