@@ -46,7 +46,7 @@ $(document).ready(function() {
   $("#newDB").click(function() {
     $('#myModal').modal('show');
     ajaxParam = {};
-    //ajaxParam["url"] = "https://www.w3schools.com/bootstrap4/checkDBConnectionStatus";
+    $('#modalSave').hide();
     ajaxParam["url"] = link + "getAllDBTypes";
     ajaxParam["method"] = "GET";
     //ajaxParam["dbType"] = $('#dbType').val();
@@ -144,6 +144,45 @@ $(document).ready(function() {
     // toggle
     $this.closest('div').parent().find('.left-pan-subsection').slideToggle();
   });
+
+  $("#userProfile").click(function() {
+    function_name = 'userProfile';
+    $('#modalTitle').text("Database Profile");
+    $('#modalSubmit').hide();
+    $('#modalSave').show();
+    $('#myModal').modal('show');
+    ajaxParam = {};
+    ajaxParam["url"] = link + "getAllDBTypes";
+    ajaxParam["method"] = "GET";
+    ajaxParam["dbType"] = $('#dbType').val();
+    ajaxParam["dbUrl"] = $('#dbUrl').val();
+    ajaxParam["successCallback"] = "dbSuccessCallback";
+    ajaxParam["completeCallback"] = "dbCompleteCallback";
+    ajaxParam["errorCallback"] = "dbErrorCallback";
+    makeAjaxCall(ajaxParam);
+    $('#myModal').modal('show');
+  });
+
+  $('[validate="true"]').click(function(e) {
+    var $this = $(this),
+      id = $this.attr('id');
+    if (validate($('.' + id))) {
+      e.preventDefault();
+      return false;
+    }
+
+    if (function_name == "userProfile") {
+      ajaxParam = {};
+      ajaxParam["method"] = "POST";
+      ajaxParam["url"] = link + "addDBProfile";
+      ajaxParam["data"] = getDivContent($('#modalContent'));
+      ajaxParam["data"]["status"] = true;
+      ajaxParam["successCallback"] = "databaseProfileDisplay";
+      ajaxParam["completeCallback"] = "dbCompleteCallback";
+      ajaxParam["errorCallback"] = "dbErrorCallback";
+      makeAjaxCall(ajaxParam);
+    }
+  });
 });
 
 function makeAjaxCall(ajaxParam) {
@@ -172,7 +211,7 @@ function dbSuccessCallback(data) {
     var length = data.length;
     $('#modalContent').append('<div class="modal-section"><label>Database Type:</label><select id="dbType" name="dbType"></select></div>');
     for (var i = 0; i < length; i++) {
-      $('#dbType').append('<option value=' + data[i].id + '>' + data[i].db_name + '</option>');
+      $('#dbType').append('<option value=' + data[i].db_name + '>' + data[i].db_name + '</option>');
     }
     $.each(data[0], function(index, value) {
       if (index.indexOf('Required') > 0 && value) {
@@ -249,7 +288,7 @@ function addTableList(data) {
   dbNameHtml = '<div class="left-pan-subsection">' +
     '<div class="vertical-dot-line"></div>' +
     '<div class="horizontal-dot-line"></div>' +
-    '<div id="' + dbName + 'DB" class="left-pan-collapse" data-id='+data['etlFlowLid']+'>' +
+    '<div id="' + dbName + 'DB" class="left-pan-collapse" data-id=' + data['etlFlowLid'] + '>' +
     '<i class="fa fa-minus-square-o hand" aria-hidden="true"></i> &nbsp;' + dbName +
     '</div>' +
     '</div>';
@@ -259,7 +298,7 @@ function addTableList(data) {
 
   // addition of table
   html = '';
-  $.each(data['sourceTableList'],function(i, v) {
+  $.each(data['sourceTableList'], function(i, v) {
     html += '<div class="left-pan-subsection">' +
       '<div class="vertical-dot-line"></div>' +
       '<div class="horizontal-dot-line"></div>' +
@@ -272,7 +311,7 @@ function addTableList(data) {
   manageDotStructure($('#' + dbName + 'DB').closest('.left-pan-subsection'));
   $('#myModal').modal('hide');
 }
-
+// return html object5 content in json format
 function getDivContent(obj) {
   data = {};
   $.each(obj.find('input,select'), function(i, v) {
@@ -281,4 +320,52 @@ function getDivContent(obj) {
     data[$this.attr('name')] = $v.val();
   });
   return data;
+}
+
+function validate(obj) {
+  var isError = false
+  $.each(obj.find('[data-validation]'), function(i, v) {
+    if ($(this).val() == '') {
+      isError = true
+      $(this).css({
+        "border": "1px solid red",
+        "background": "#FFCECE"
+      });
+    } else {
+      $(this).css({
+        "border": "",
+        "background": ""
+      });
+    }
+    console.log(v);
+  });
+  return isError;
+}
+
+function databaseProfileDisplay(data){
+
+		//$('#dbProfile').closest('.left-pan-subsection').remove();
+		html = '';
+		html += '<div class="left-pan-subsection">'
+						+ '<div class="vertical-dot-line"></div>'
+						+ '<div class="horizontal-dot-line"></div>'
+						+ '<div id="dbProfile" class="left-pan-collapse">'
+						+		'<i class="fa fa-plus-square-o hand" aria-hidden="true"></i> &nbsp;' + "Database Profile"
+						+	'</div>'
+						+'</div>';
+		//$('#source').closest('.left-pan-subsection').append(html);
+		//manageDotStructure($('#source').closest('.left-pan-subsection'));
+		html='';
+		$.each(data,function(i,ref){
+			html += '<div class="left-pan-subsection">'
+						+ '<div class="vertical-dot-line"></div>'
+						+ '<div class="horizontal-dot-line"></div>'
+						+ '<div id="source" class="left-pan-collapse">'
+						+		'<i class="fa fa-plus-square-o hand" aria-hidden="true"></i> &nbsp;' + ref.profileName
+						+	'</div>'
+						+'</div>';
+		});
+		$('#dbProfile').closest('.left-pan-subsection').append(html);
+		manageDotStructure($('#dbProfile').closest('.left-pan-subsection'));
+		$('#myModal').modal('hide');
 }

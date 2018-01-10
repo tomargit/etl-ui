@@ -24,8 +24,7 @@
 				<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="javascript:void(0)" id="navbardrop" data-toggle="dropdown"> Source Action </a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" href="javascript:void(0)" id="newDB">Database</a>
-						<!--<a class="dropdown-item" href="#" <!--data-toggle="modal" data-target="#myModal">Link 2</a>
-				<a class="dropdown-item" href="#">Link 3</a>-->
+						<a class="dropdown-item" href="#" id="userProfile">Database Profile</a>
 					</div>
 				</li>
 			</ul>
@@ -41,7 +40,7 @@
 					</div>
 
 					<!-- Modal body -->
-					<div class="modal-body">
+					<div class="modal-body modalSubmit modalSave">
 						<div id="modalContent">
 						</div>
 						<div id="moreContent">
@@ -50,7 +49,8 @@
 
 					<!-- Modal footer -->
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" id="modalSubmit">Submit</button>
+						<button type="button" class="btn btn-primary" id="modalSave" validate="true">Save</button>
+						<button type="button" class="btn btn-primary" id="modalSubmit" validate="true">Submit</button>
 						<button type="button" class="btn btn-secondary" data-dismiss="modal" id="modalClose">Close</button>
 					</div>
 
@@ -69,6 +69,13 @@
 							<div class="horizontal-dot-line"></div>
 							<div id="source" class="left-pan-collapse">
 								<i class="fa fa-plus-square-o hand" aria-hidden="true"></i> &nbsp;Source
+							</div>
+						</div>
+						<div class="left-pan-subsection">
+							<div class="vertical-dot-line"></div>
+							<div class="horizontal-dot-line"></div>
+							<div id="dbProfile" class="left-pan-collapse">
+								<i class="fa fa-plus-square-o hand" aria-hidden="true"></i> &nbsp;Database Profile
 							</div>
 						</div>
 						<div class="left-pan-subsection">
