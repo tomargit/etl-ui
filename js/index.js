@@ -7,7 +7,7 @@ $(document).ready(function() {
   verticalDashDiv = '<div class="vertical-dot-line"></div>';
   horizontalDashDiv = '<div class="horizontal-dot-line"></div>';
   dashDiv = '<div>' + verticalDashDiv + '' + horizontalDashDiv + '</div>';
-  link = 'http://10.11.244.78:8080/ETLTool/';
+  link = 'http://localhost:8080/ETLTool/';
 
   // manage height of left and right panel
   var mainHeight = $('#main').height(),
@@ -147,64 +147,22 @@ $(document).ready(function() {
 });
 
 function makeAjaxCall(ajaxParam) {
-
-  if (ajaxParam['method'].toUpperCase() === 'POST') {
-    $.ajax({
-      url: ajaxParam['url'],
-      type: ajaxParam['method'],
-      //data: (ajaxParam['data'] && ajaxParam['method'].toUpperCase() === 'POST' ? JSON.stringify(ajaxParam['data']) : ''),
-      data: {
-"targetTableName" : "empIndia11",
-"sourceList" : [
-{
- "name": "employee",
- "url": "localhost",
- "dbType": "mysql",
-"userName": "root",
-"password": "root"
-},
-{
- "name": "salary",
- "url": "localhost",
- "dbType": "mysql",
-"userName": "root",
-"password": "root"
-},
-{
- "name": "emp_details",
- "url": "localhost",
- "dbType": "mysql",
-"userName": "root",
-"password": "root"
-}
-
-
-]
-},
-      //contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      crossDomain: true,
-      error: function() {},
-      beforeSend: function() {},
-      complete: function() {},
-      success: function(result) {
-        window[ajaxParam["successCallback"]](result);
-      }
-    });
-  } else {
-
-    $.ajax({
-      url: ajaxParam['url'],
-      type: ajaxParam['method'],
-      crossDomain: true,
-      error: function() {},
-      beforeSend: function() {},
-      complete: function() {},
-      success: function(result) {
-        window[ajaxParam["successCallback"]](result);
-      }
-    });
-  }
+  $.ajax({
+    url: ajaxParam['url'],
+    type: ajaxParam['method'],
+    data: (ajaxParam['data'] && ajaxParam['method'].toUpperCase() === 'POST' ? JSON.stringify(ajaxParam['data']) : ''),
+    //data: (ajaxParam['method'].toUpperCase() === 'POST' ? JSON.stringify(json):''),
+    contentType: "application/json; charset=utf-8",
+    dataType: "json",
+    crossDomain: true,
+    processData: false,
+    error: function() {},
+    beforeSend: function() {},
+    complete: function() {},
+    success: function(result) {
+      window[ajaxParam["successCallback"]](result);
+    }
+  });
 }
 
 function dbSuccessCallback(data) {
@@ -286,11 +244,12 @@ function manageDotStructure(obj) {
 
 function addTableList(data) {
   // first add database
-  dbName = $('#dbName').val();
+  //dbName = $('#dbName').val();
+  dbName = data['dbName'];
   dbNameHtml = '<div class="left-pan-subsection">' +
     '<div class="vertical-dot-line"></div>' +
     '<div class="horizontal-dot-line"></div>' +
-    '<div id="' + dbName + 'DB" class="left-pan-collapse">' +
+    '<div id="' + dbName + 'DB" class="left-pan-collapse" data-id='+data['etlFlowLid']+'>' +
     '<i class="fa fa-minus-square-o hand" aria-hidden="true"></i> &nbsp;' + dbName +
     '</div>' +
     '</div>';
@@ -300,15 +259,12 @@ function addTableList(data) {
 
   // addition of table
   html = '';
-  $('#moreContent a.table-select').each(function(i, ref) {
-    var $ref = $(ref),
-      tableName = $ref.html();
-
+  $.each(data['sourceTableList'],function(i, v) {
     html += '<div class="left-pan-subsection">' +
       '<div class="vertical-dot-line"></div>' +
       '<div class="horizontal-dot-line"></div>' +
       '<div id="' + dbName + 'DB' + i + '" class="left-pan-collapse text-format">' +
-      '<i class="fa fa-plus-square-o hand" aria-hidden="true"></i> &nbsp;<a href="javascript:void(0)" style="color : black;" class="' + dbName + 'DB' + i + '">' + tableName +
+      '<i class="fa fa-plus-square-o hand" aria-hidden="true"></i> &nbsp;<a href="javascript:void(0)" style="color : black;" class="' + dbName + 'DB' + i + '">' + v +
       '</a></div>' +
       '</div>';
   });
