@@ -31,11 +31,6 @@ $(document).ready(function() {
     ajaxParam = {};
     ajaxParam["url"] = link + "getDBTableList/" + $('#dbType option:selected').text() + '/' + $('#dbName').val() + '/' + $('#url').val() + '/' + $('#userName').val() + '/' + $('#password').val();;
     ajaxParam["method"] = "GET";
-    //lastDBConnectionData["dbType"] = $('#dbType').val();
-    //lastDBConnectionData["url"] = $('#url').val();
-    //lastDBConnectionData["userName"] = $('#userName').val();
-    //lastDBConnectionData["password"] = $('#password').val();
-    //lastDBConnectionData = getDivContent($('#modalContent'));
     lastDBConnectionData = getDivContent($('#modalContent'));
     ajaxParam["successCallback"] = "sourceDataSuccess";
     ajaxParam["completeCallback"] = "dbCompleteCallback";
@@ -49,14 +44,10 @@ $(document).ready(function() {
     $('#modalSave').hide();
     ajaxParam["url"] = link + "getAllDBTypes";
     ajaxParam["method"] = "GET";
-    //ajaxParam["dbType"] = $('#dbType').val();
-    //ajaxParam["dbUrl"] = $('#dbUrl').val();
     ajaxParam["successCallback"] = "dbSuccessCallback";
     ajaxParam["completeCallback"] = "dbCompleteCallback";
     ajaxParam["errorCallback"] = "dbErrorCallback";
     makeAjaxCall(ajaxParam);
-    //dbData = [{"passRequired":false,"dbType":"Hbase","status":true,"userNameRequired":false,"urlRequired":true},{"passRequired":true,"dbType":"MySql","status":true,"userNameRequired":true,"urlRequired":true}];
-    //dbSuccessCallback(dbData);
     $('#myModal').modal('show');
   });
 
@@ -106,7 +97,6 @@ $(document).ready(function() {
     var $this = $(this);
 
     ajaxParam = {};
-    //ajaxParam["url"] = "https://www.w3schools.com/bootstrap4/checkDBConnectionStatus";
     ajaxParam["url"] = link + "addETLFlow";
     ajaxParam["method"] = "POST";
     ajaxParam["data"] = {};
@@ -171,7 +161,7 @@ $(document).ready(function() {
       return false;
     }
 
-    if (function_name == "userProfile") {
+    if (typeof function_name !== 'undefined' && function_name == "userProfile") {
       ajaxParam = {};
       ajaxParam["method"] = "POST";
       ajaxParam["url"] = link + "addDBProfile";
@@ -186,11 +176,11 @@ $(document).ready(function() {
 });
 
 function makeAjaxCall(ajaxParam) {
+  request = ajaxParam['data'] && ajaxParam['method'].toUpperCase() === 'POST' ? JSON.stringify(ajaxParam['data']) : ''; 
   $.ajax({
     url: ajaxParam['url'],
     type: ajaxParam['method'],
-    data: (ajaxParam['data'] && ajaxParam['method'].toUpperCase() === 'POST' ? JSON.stringify(ajaxParam['data']) : ''),
-    //data: (ajaxParam['method'].toUpperCase() === 'POST' ? JSON.stringify(json):''),
+    data: request,
     contentType: "application/json; charset=utf-8",
     dataType: "json",
     crossDomain: true,
@@ -198,13 +188,14 @@ function makeAjaxCall(ajaxParam) {
     error: function() {},
     beforeSend: function() {},
     complete: function() {},
-    success: function(result) {
-      window[ajaxParam["successCallback"]](result);
+    success: function(response) {
+      window[ajaxParam["successCallback"]]({'request': request, 'response': response});
     }
   });
 }
 
-function dbSuccessCallback(data) {
+function dbSuccessCallback(ajaxData) {
+	data = ajaxData['response'];
   $('#modalContent').html('');
   $('#moreContent').html('');
   if (data && data.length > 0) {
@@ -239,10 +230,11 @@ function dbErrorCallback() {
   $('#modalClose').click();
 }
 
-function sourceDataSuccess(data) {
+function sourceDataSuccess(ajaxData) {
+  data = ajaxData['response'];
   if (data && data.length > 0) {
     sourceData = data;
-    $('#moreContent').html('<div id="dbTable" style="display:none;"><div class="modal-text"></div></div>');
+    $('#moreContent').html('<label>Database Table:</label><div id="dbTable" style="display:none;"><div class="modal-text"></div></div>');
     $('.modal-content').height($('.modal-content').height() + $('#dbTable').height());
     $.each(sourceData, function(i, v) {
       $('.modal-text').append('<a href="javascript:void(0)" style="color : black;" class="table-select-not" data-id=' + i + '>' + v.tableName + '</a><br/>');
@@ -282,13 +274,13 @@ function manageDotStructure(obj) {
 }
 
 function addTableList(data) {
-  // first add database
-  //dbName = $('#dbName').val();
-  dbName = data['dbName'];
+  request = JSON.parse(data['request']);
+  response = data['response'];
+  dbName = request.targetTableName;
   dbNameHtml = '<div class="left-pan-subsection">' +
     '<div class="vertical-dot-line"></div>' +
     '<div class="horizontal-dot-line"></div>' +
-    '<div id="' + dbName + 'DB" class="left-pan-collapse" data-id=' + data['etlFlowLid'] + '>' +
+    '<div id="' + dbName + 'DB" class="left-pan-collapse" data-id=' + response['etlFlowLid'] + '>' +
     '<i class="fa fa-minus-square-o hand" aria-hidden="true"></i> &nbsp;' + dbName +
     '</div>' +
     '</div>';
@@ -298,7 +290,7 @@ function addTableList(data) {
 
   // addition of table
   html = '';
-  $.each(data['sourceTableList'], function(i, v) {
+  $.each(response['sourceTableList'], function(i, v) {
     html += '<div class="left-pan-subsection">' +
       '<div class="vertical-dot-line"></div>' +
       '<div class="horizontal-dot-line"></div>' +
@@ -342,9 +334,9 @@ function validate(obj) {
   return isError;
 }
 
-function databaseProfileDisplay(data){
+function databaseProfileDisplay(ajaxData){
+		data = ajaxData['response'];
 
-		//$('#dbProfile').closest('.left-pan-subsection').remove();
 		html = '';
 		html += '<div class="left-pan-subsection">'
 						+ '<div class="vertical-dot-line"></div>'
@@ -353,8 +345,6 @@ function databaseProfileDisplay(data){
 						+		'<i class="fa fa-plus-square-o hand" aria-hidden="true"></i> &nbsp;' + "Database Profile"
 						+	'</div>'
 						+'</div>';
-		//$('#source').closest('.left-pan-subsection').append(html);
-		//manageDotStructure($('#source').closest('.left-pan-subsection'));
 		html='';
 		$.each(data,function(i,ref){
 			html += '<div class="left-pan-subsection">'
